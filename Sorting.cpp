@@ -5,6 +5,7 @@
 using namespace std;
 using namespace std::chrono;
 
+const int INSERTION_SORT_THRESHOLD = 32;
 int const MAX = 50000;
 unsigned long long int steps;
 
@@ -17,6 +18,9 @@ void MergeSort(int *arr, int begin, int end);
 void Merge(int *arr, int begin, int mid, int end);
 void quickSort(int arr[], int begin, int end);
 int partition(int arr[], int begin, int end);
+void merge(int* array, int size, int* temp);
+void merge_sort(int* array, int size, int* temp);
+void combine_merge_sort_and_insertion_sort(int* array, int size);
 
 void insertionsort(int A[], int size)
 {
@@ -243,6 +247,69 @@ int partition(int A[], int begin, int end)
 	return (index + 1);
 }
 
+void merge(int* array, int size, int* temp) 
+{
+	int middle = size / 2;
+	int i = 0, j = middle, k = 0;
+
+	while (i < middle && j < size) 
+	{
+		if (array[i] < array[j])
+		{
+			temp[k++] = array[i++];
+		}
+
+		else 
+		{
+			temp[k++] = array[j++];
+		}
+	}
+
+	while (i < middle)
+	{
+		temp[k++] = array[i++];
+	}
+
+	while (j < size)
+	{
+		temp[k++] = array[j++];
+	}
+
+	for (int i = 0; i < size; i++)
+	{
+		array[i] = temp[i];
+	}
+
+}
+
+void merge_sort(int* array, int size, int* temp)
+{
+	if (size <= INSERTION_SORT_THRESHOLD)
+	{
+		return;
+	}
+
+	int middle = size / 2;
+	merge_sort(array, middle, temp);
+	merge_sort(array + middle, size - middle, temp);
+	merge(array, size, temp);
+}
+
+void combine_merge_sort_and_insertion_sort(int* array, int size)
+{
+	if (size <= INSERTION_SORT_THRESHOLD)
+	{
+		insertionsort(array, size);
+	}
+
+	else
+	{
+		int* temp = new int[size];
+		merge_sort(array, size, temp);
+		delete[] temp;
+	}
+}
+
 int main()
 {	
 	Sort s;
@@ -265,7 +332,7 @@ int main()
 
 		s.fillArray(A);
 		s.fillArray(B);
-
+		
 		insertionsort(B, length);
 		//s.print(B);
 		s.ResetArrayB(A, B);
@@ -311,6 +378,16 @@ int main()
 		//s.print(B);
 		s.ResetArrayB(A, B);
 
+		high_resolution_clock::time_point start4 = high_resolution_clock::now();
+		combine_merge_sort_and_insertion_sort(B, length);
+		high_resolution_clock::time_point end4 = high_resolution_clock::now();
+		duration<double, std::micro> timeRequired4 = (end4 - start4);
+		cout << "The Merge && insertion sort algorthim took: " << timeRequired4.count() << " micro seconds" << endl;
+		cout << "Merge && insertion number of steps: " << steps << endl << endl;
+		steps = 0;
+		//s.print(B);
+		s.ResetArrayB(A, B);
+
 		delete A;
 	    delete B;
 
@@ -334,7 +411,7 @@ int main()
 
 		s.fillReverse(A);
 		s.fillReverse(B);
-
+		
 		insertionsort(B, length);
 		//s.print(B);
 		s.ResetArrayB(A, B);
@@ -357,7 +434,7 @@ int main()
 		steps = 0;
 		//s.print(B);
 		s.ResetArrayB(A, B);
-
+		
 
 		high_resolution_clock::time_point start2 = high_resolution_clock::now();
 		MergeSort(B, 0, length - 1);
@@ -379,6 +456,17 @@ int main()
 		steps = 0;
 		//s.print(B);
 		s.ResetArrayB(A, B);
+
+		high_resolution_clock::time_point start4 = high_resolution_clock::now();
+		combine_merge_sort_and_insertion_sort(B, length);
+		high_resolution_clock::time_point end4 = high_resolution_clock::now();
+		duration<double, std::micro> timeRequired4 = (end4 - start4);
+		cout << "The Merge && insertion sort algorthim took: " << timeRequired4.count() << " micro seconds" << endl;
+		cout << "Merge && insertion number of steps: " << steps << endl << endl;
+		steps = 0;
+		//s.print(B);
+		s.ResetArrayB(A, B);
+
 
 		delete A;
 		delete B;
@@ -430,7 +518,7 @@ int main()
 		steps = 0;
 		//s.print(B);
 		s.ResetArrayB(A, B);
-
+		
 
 		high_resolution_clock::time_point start2 = high_resolution_clock::now();
 		MergeSort(B, 0, length - 1);
@@ -449,6 +537,16 @@ int main()
 		duration<double, std::micro> timeRequired3 = (end3 - start3);
 		cout << "The Quicksort algorthim took: " << timeRequired3.count() << " micro seconds" << endl;
 		cout << "Quick sort number of steps: " << steps << endl << endl;
+		steps = 0;
+		//s.print(B);
+		s.ResetArrayB(A, B);
+
+		high_resolution_clock::time_point start4 = high_resolution_clock::now();
+		combine_merge_sort_and_insertion_sort(B, length);
+		high_resolution_clock::time_point end4 = high_resolution_clock::now();
+		duration<double, std::micro> timeRequired4 = (end4 - start4);
+		cout << "The Merge && insertion sort algorthim took: " << timeRequired4.count() << " micro seconds" << endl;
+		cout << "Merge && insertion number of steps: " << steps << endl << endl;
 		steps = 0;
 		//s.print(B);
 		s.ResetArrayB(A, B);
